@@ -90,12 +90,9 @@ namespace WebServerTask
         private readonly StreamSocketListener listener;
         private AppServiceConnection appServiceConnection;
 
-        public HttpServer(int serverPort, AppServiceConnection connection)
+        public HttpServer(int serverPort, AppServiceConnection connection) : this(serverPort)
         {
-            listener = new StreamSocketListener();
-            port = serverPort; 
             appServiceConnection = connection;
-            listener.ConnectionReceived += (s, e) => ProcessRequestAsync(e.Socket);
         }
 
         public HttpServer(int serverPort)
@@ -105,17 +102,9 @@ namespace WebServerTask
             listener.ConnectionReceived += (s, e) => ProcessRequestAsync(e.Socket);
         }
 
-        public void StartServer()
-        {
-#pragma warning disable CS4014
-            listener.BindServiceNameAsync(port.ToString());
-#pragma warning restore CS4014
-        }
+        public async void StartServer() => await listener.BindServiceNameAsync(port.ToString());
 
-        public void Dispose()
-        {
-            listener.Dispose();
-        }
+        public void Dispose() => listener.Dispose();
 
         private async void ProcessRequestAsync(StreamSocket socket)
         {
@@ -170,23 +159,22 @@ namespace WebServerTask
                 var responseStatus = await appServiceConnection.SendMessageAsync(updateMessage);
             }
 
-            string html = state == "On" ? onHtmlString : offHtmlString; 
+            string html = state == "On" ? onHtmlString : offHtmlString;
             // Show the html 
             using (Stream resp = os.AsStreamForWrite())
-                {
-                    // Look in the Data subdirectory of the app package
-                    byte[] bodyArray = Encoding.UTF8.GetBytes(html);
-                    MemoryStream stream = new MemoryStream(bodyArray);
-                    string header = String.Format("HTTP/1.1 200 OK\r\n" +
-                                      "Content-Length: {0}\r\n" +
-                                      "Connection: close\r\n\r\n",
-                                      stream.Length);
-                    byte[] headerArray = Encoding.UTF8.GetBytes(header);
-                    await resp.WriteAsync(headerArray, 0, headerArray.Length);
-                    await stream.CopyToAsync(resp);
-                    await resp.FlushAsync();
-                }
-           
+            {
+                // Look in the Data subdirectory of the app package
+                byte[] bodyArray = Encoding.UTF8.GetBytes(html);
+                MemoryStream stream = new MemoryStream(bodyArray);
+                string header = String.Format("HTTP/1.1 200 OK\r\n" +
+                                  "Content-Length: {0}\r\n" +
+                                  "Connection: close\r\n\r\n",
+                                  stream.Length);
+                byte[] headerArray = Encoding.UTF8.GetBytes(header);
+                await resp.WriteAsync(headerArray, 0, headerArray.Length);
+                await stream.CopyToAsync(resp);
+                await resp.FlushAsync();
+            }
         }
      }
 }
