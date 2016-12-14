@@ -84,7 +84,6 @@ namespace WebServer
         };
 
         public string FilePath { get; set; }
-
         private const uint BufferSize = 8192;
         private int port = 8080;
         private readonly StreamSocketListener listener;
@@ -103,7 +102,6 @@ namespace WebServer
         }
 
         public async void StartServer() => await listener.BindServiceNameAsync(port.ToString());
-
         public void Dispose() => listener.Dispose();
 
         private async void ProcessRequestAsync(StreamSocket socket)
@@ -144,7 +142,7 @@ namespace WebServer
                 using (FileStream sourceStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
                 {
                     string mime;
-                    string header = String.Format("HTTP/1.1 200 OK\r\n" +
+                    string header = string.Format("HTTP/1.1 200 OK\r\n" +
                                       "Date: " + DateTime.Now.ToString("R") + "\r\n" +
                                       "Server: MeoGoEmbedded/1.0\r\n" +
                                       //"Transfer-Encoding: chunked\r\n" +
@@ -172,13 +170,11 @@ namespace WebServer
         public static byte[] ReadToEnd(Stream stream)
         {
             long originalPosition = 0;
-
             if (stream.CanSeek)
             {
                 originalPosition = stream.Position;
                 stream.Position = 0;
             }
-
             try
             {
                 byte[] readBuffer = new byte[4096];

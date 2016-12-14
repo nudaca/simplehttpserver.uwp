@@ -17,9 +17,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 -->
-
-
-
+    
 <Page
     x:Class="WebServer.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -29,9 +27,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="pickerBtb" Content="Image Picker" HorizontalAlignment="Left" Margin="86,149,0,0" VerticalAlignment="Top" Click="pickerBtb_Click"/>
-        <Button x:Name="pickerVideoBtn" Content="Video Picker" HorizontalAlignment="Left" Margin="86,186,0,0" VerticalAlignment="Top" Click="pickerVideoBtn_Click"/>
-
-    </Grid>
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Button x:Name="pickerBtb" Content="Image Picker" HorizontalAlignment="Stretch" Margin="0,0,0,5" VerticalAlignment="Top" Click="pickerBtb_Click"/>
+        <Button x:Name="pickerVideoBtn" Content="Video Picker" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Top" Click="pickerVideoBtn_Click"/>
+    </StackPanel>
 </Page>

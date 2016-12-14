@@ -1,15 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
-
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Net.Http;
 using Windows.Foundation.Collections;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.AppService;
-using Windows.System.Threading;
 using Windows.Networking.Sockets;
 using System.IO;
 using Windows.Storage.Streams;
@@ -46,31 +40,27 @@ namespace WebServerTask
             switch (command)
             {
                 case "Initialize":
-                    {
-                        var messageDeferral = args.GetDeferral();
-                        //Set a result to return to the caller
-                        var returnMessage = new ValueSet();
-                        HttpServer server = new HttpServer(8000, appServiceConnection);
-                        IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-                            (workItem) =>
-                            {
-                                server.StartServer();
-                            });
-                        returnMessage.Add("Status", "Success");
-                        var responseStatus = await args.Request.SendResponseAsync(returnMessage);
-                        messageDeferral.Complete();
-                        break;
-                    }
-
+                    var messageDeferral = args.GetDeferral();
+                    //Set a result to return to the caller
+                    var returnMessage = new ValueSet();
+                    HttpServer server = new HttpServer(8000, appServiceConnection);
+                    IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+                        (workItem) =>
+                        {
+                            server.StartServer();
+                        });
+                    returnMessage.Add("Status", "Success");
+                    var responseStatus = await args.Request.SendResponseAsync(returnMessage);
+                    messageDeferral.Complete();
+                    break;
                 case "Quit":
-                    {
-                        //Service was asked to quit. Give us service deferral
-                        //so platform can terminate the background task
-                        serviceDeferral.Complete();
-                        break;
-                    }
+                    //Service was asked to quit. Give us service deferral
+                    //so platform can terminate the background task
+                    serviceDeferral.Complete();
+                    break;
             }
         }
+
         private void OnCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
             //Clean up and get ready to exit
@@ -83,7 +73,6 @@ namespace WebServerTask
     public sealed class HttpServer : IDisposable
     {
         string offHtmlString = "<html><head><title>Rose Button</title></head><body><video><source src = \"http://0.s3.envato.com/h264-video-previews/80fad324-9db4-11e3-bf3d-0050569255a8/490527.mp4\" type=\"video/mp4\">  Your browser does not support the video tag. </video></body></html>";
-
         string onHtmlString = "<html><head><title>Blinky App</title></head><body><form action=\"blinky.html\" method=\"GET\"><input type=\"radio\" name=\"state\" value=\"on\" checked onclick=\"this.form.submit()\"> On<br><input type=\"radio\" name=\"state\" value=\"off\" onclick=\"this.form.submit()\"> Off</form></body></html>";
         private const uint BufferSize = 8192;
         private int port = 8000;
@@ -127,7 +116,6 @@ namespace WebServerTask
             {
                 string requestMethod = request.ToString().Split('\n')[0];
                 string[] requestParts = requestMethod.Split(' ');
-
                 if (requestParts[0] == "GET")
                     await WriteResponseAsync(requestParts[1], output);
                 else

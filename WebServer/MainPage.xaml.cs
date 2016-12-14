@@ -19,6 +19,7 @@ namespace WebServer
     public sealed partial class MainPage : Page
     {
         HttpServer server;
+        private readonly StorageFolder installLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
 
         public MainPage()
         {
@@ -32,11 +33,13 @@ namespace WebServer
 
             // check if task is already registered
             foreach (var cur in BackgroundTaskRegistration.AllTasks)
+            {
                 if (cur.Value.Name == myTaskName)
                 {
-                    await (new MessageDialog("Task already registered")).ShowAsync();
+                    Log("Task already registered", "Caution");
                     return;
                 }
+            }
 
             // Windows Phone app must call this to use trigger types (see MSDN)
             await BackgroundExecutionManager.RequestAccessAsync();
@@ -52,36 +55,32 @@ namespace WebServer
             await (new MessageDialog("Task registered")).ShowAsync();
         }
 
-        private readonly StorageFolder _installLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
-
         private async void pickerBtb_Click(object sender, RoutedEventArgs e)
         {
             //Set a result to return to the caller
             var returnMessage = new ValueSet();
             server = new HttpServer(8080);
-
             server.StartServer();
             returnMessage.Add("Status", "Success");
 
             // var myPictures = await StorageLibrary.GetLibraryAsync(Windows.Storage.KnownLibraryId.Pictures);
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation =
-                Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
 
-            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                Debug.WriteLine( "Picked photo: " + file.Path);
+                Log("Picked photo: " + file.Path, "Success");
                 server.FilePath = file.Path;
             }
             else
             {
-                Debug.WriteLine( "Operation cancelled.");
+                Log("Operation cancelled.", "Error");
             }
         }
 
@@ -103,13 +102,18 @@ namespace WebServer
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                Debug.WriteLine("Picked video: " + file.Path);
+                Log("Picked video: " + file.Path, "Success");
                 server.FilePath = file.Path;
             }
             else
             {
-                Debug.WriteLine("Operation cancelled.");
+                Log("Operation cancelled.", "Error");
             }
+        }
+
+        private static async void Log(string message, string title)
+        {
+            await new MessageDialog(message, title).ShowAsync();
         }
     }
 }
