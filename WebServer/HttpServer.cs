@@ -12,95 +12,87 @@ namespace WebServer
 {
     public sealed class HttpServer : IDisposable
     {
-        private static IDictionary<string, string> _mimeTypeMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase) {
-        #region extension to MIME type list
-        {".asf", "video/x-ms-asf"},
-        {".asx", "video/x-ms-asf"},
-        {".avi", "video/x-msvideo"},
-        {".bin", "application/octet-stream"},
-        {".cco", "application/x-cocoa"},
-        {".crt", "application/x-x509-ca-cert"},
-        {".css", "text/css"},
-        {".deb", "application/octet-stream"},
-        {".der", "application/x-x509-ca-cert"},
-        {".dll", "application/octet-stream"},
-        {".dmg", "application/octet-stream"},
-        {".ear", "application/java-archive"},
-        {".eot", "application/octet-stream"},
-        {".exe", "application/octet-stream"},
-        {".flv", "video/x-flv"},
-        {".gif", "image/gif"},
-        {".hqx", "application/mac-binhex40"},
-        {".htc", "text/x-component"},
-        {".htm", "text/html"},
-        {".html", "text/html"},
-        {".ico", "image/x-icon"},
-        {".img", "application/octet-stream"},
-        {".iso", "application/octet-stream"},
-        {".jar", "application/java-archive"},
-        {".jardiff", "application/x-java-archive-diff"},
-        {".jng", "image/x-jng"},
-        {".jnlp", "application/x-java-jnlp-file"},
-        {".jpeg", "image/jpeg"},
-        {".jpg", "image/jpeg"},
-        {".js", "application/x-javascript"},
-        {".mml", "text/mathml"},
-        {".mng", "video/x-mng"},
-        {".mov", "video/quicktime"},
-        {".mp3", "audio/mpeg"},
-        {".mp4", "video/mp4"},
-        {".mpeg", "video/mpeg"},
-        {".mpg", "video/mpeg"},
-        {".msi", "application/octet-stream"},
-        {".msm", "application/octet-stream"},
-        {".msp", "application/octet-stream"},
-        {".pdb", "application/x-pilot"},
-        {".pdf", "application/pdf"},
-        {".pem", "application/x-x509-ca-cert"},
-        {".pl", "application/x-perl"},
-        {".pm", "application/x-perl"},
-        {".png", "image/png"},
-        {".prc", "application/x-pilot"},
-        {".ra", "audio/x-realaudio"},
-        {".rar", "application/x-rar-compressed"},
-        {".rpm", "application/x-redhat-package-manager"},
-        {".rss", "text/xml"},
-        {".run", "application/x-makeself"},
-        {".sea", "application/x-sea"},
-        {".shtml", "text/html"},
-        {".sit", "application/x-stuffit"},
-        {".swf", "application/x-shockwave-flash"},
-        {".tcl", "application/x-tcl"},
-        {".tk", "application/x-tcl"},
-        {".txt", "text/plain"},
-        {".war", "application/java-archive"},
-        {".wbmp", "image/vnd.wap.wbmp"},
-        {".wmv", "video/x-ms-wmv"},
-        {".xml", "text/xml"},
-        {".xpi", "application/x-xpinstall"},
-        {".zip", "application/zip"},
-        #endregion
-    };
-
-        private static string filePath;
-
-        public string FilePath
+        private static IDictionary<string, string> _mimeTypeMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase)
         {
-            get { return filePath; }
-            set { filePath = value; }
-        }
+            #region extension to MIME type list
+            {".asf", "video/x-ms-asf"},
+            {".asx", "video/x-ms-asf"},
+            {".avi", "video/x-msvideo"},
+            {".bin", "application/octet-stream"},
+            {".cco", "application/x-cocoa"},
+            {".crt", "application/x-x509-ca-cert"},
+            {".css", "text/css"},
+            {".deb", "application/octet-stream"},
+            {".der", "application/x-x509-ca-cert"},
+            {".dll", "application/octet-stream"},
+            {".dmg", "application/octet-stream"},
+            {".ear", "application/java-archive"},
+            {".eot", "application/octet-stream"},
+            {".exe", "application/octet-stream"},
+            {".flv", "video/x-flv"},
+            {".gif", "image/gif"},
+            {".hqx", "application/mac-binhex40"},
+            {".htc", "text/x-component"},
+            {".htm", "text/html"},
+            {".html", "text/html"},
+            {".ico", "image/x-icon"},
+            {".img", "application/octet-stream"},
+            {".iso", "application/octet-stream"},
+            {".jar", "application/java-archive"},
+            {".jardiff", "application/x-java-archive-diff"},
+            {".jng", "image/x-jng"},
+            {".jnlp", "application/x-java-jnlp-file"},
+            {".jpeg", "image/jpeg"},
+            {".jpg", "image/jpeg"},
+            {".js", "application/x-javascript"},
+            {".mml", "text/mathml"},
+            {".mng", "video/x-mng"},
+            {".mov", "video/quicktime"},
+            {".mp3", "audio/mpeg"},
+            {".mp4", "video/mp4"},
+            {".mpeg", "video/mpeg"},
+            {".mpg", "video/mpeg"},
+            {".msi", "application/octet-stream"},
+            {".msm", "application/octet-stream"},
+            {".msp", "application/octet-stream"},
+            {".pdb", "application/x-pilot"},
+            {".pdf", "application/pdf"},
+            {".pem", "application/x-x509-ca-cert"},
+            {".pl", "application/x-perl"},
+            {".pm", "application/x-perl"},
+            {".png", "image/png"},
+            {".prc", "application/x-pilot"},
+            {".ra", "audio/x-realaudio"},
+            {".rar", "application/x-rar-compressed"},
+            {".rpm", "application/x-redhat-package-manager"},
+            {".rss", "text/xml"},
+            {".run", "application/x-makeself"},
+            {".sea", "application/x-sea"},
+            {".shtml", "text/html"},
+            {".sit", "application/x-stuffit"},
+            {".swf", "application/x-shockwave-flash"},
+            {".tcl", "application/x-tcl"},
+            {".tk", "application/x-tcl"},
+            {".txt", "text/plain"},
+            {".war", "application/java-archive"},
+            {".wbmp", "image/vnd.wap.wbmp"},
+            {".wmv", "video/x-ms-wmv"},
+            {".xml", "text/xml"},
+            {".xpi", "application/x-xpinstall"},
+            {".zip", "application/zip"},
+            #endregion
+        };
+
+        public string FilePath { get; set; }
 
         private const uint BufferSize = 8192;
         private int port = 8080;
         private readonly StreamSocketListener listener;
         private AppServiceConnection appServiceConnection;
 
-        public HttpServer(int serverPort, AppServiceConnection connection)
+        public HttpServer(int serverPort, AppServiceConnection connection) : this(serverPort)
         {
-            listener = new StreamSocketListener();
-            port = serverPort;
             appServiceConnection = connection;
-            listener.ConnectionReceived += (s, e) => ProcessRequestAsync(e.Socket);
         }
 
         public HttpServer(int serverPort)
@@ -110,17 +102,9 @@ namespace WebServer
             listener.ConnectionReceived += (s, e) => ProcessRequestAsync(e.Socket);
         }
 
-        public void StartServer()
-        {
-#pragma warning disable CS4014
-            listener.BindServiceNameAsync(port.ToString());
-#pragma warning restore CS4014
-        }
+        public async void StartServer() => await listener.BindServiceNameAsync(port.ToString());
 
-        public void Dispose()
-        {
-            listener.Dispose();
-        }
+        public void Dispose() => listener.Dispose();
 
         private async void ProcessRequestAsync(StreamSocket socket)
         {
@@ -155,12 +139,9 @@ namespace WebServer
 
         private async Task WriteResponseAsync(string request, IOutputStream os)
         {
-
-            //     if ((Path.GetExtension(filename).ToLower() == "jpg") || (Path.GetExtension(filename).ToLower() == "png") || (Path.GetExtension(filename).ToLower() == "gif"))
-
             using (Stream resp = os.AsStreamForWrite())
             {
-                using (FileStream sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                using (FileStream sourceStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
                 {
                     string mime;
                     string header = String.Format("HTTP/1.1 200 OK\r\n" +
@@ -172,7 +153,7 @@ namespace WebServer
                                       "Content-Type: {1}\r\n" +
                                       "Connection: close\r\n\r\n",
                                       sourceStream.Length,
-                                      _mimeTypeMappings.TryGetValue(Path.GetExtension(filePath), out mime) ? mime : "application/octet-stream", File.GetLastWriteTime(filePath).ToString("r"));
+                                      _mimeTypeMappings.TryGetValue(Path.GetExtension(FilePath), out mime) ? mime : "application/octet-stream", File.GetLastWriteTime(FilePath).ToString("r"));
                     byte[] headerArray = Encoding.UTF8.GetBytes(header);
                     await resp.WriteAsync(headerArray, 0, headerArray.Length);
 
