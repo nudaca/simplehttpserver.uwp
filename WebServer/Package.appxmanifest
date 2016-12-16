@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="WebServer" Publisher="CN=IoTTools" Version="1.0.0.0" />
+  <Identity Name="WebServer" Publisher="CN=Jaedson" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="8fdb9bc1-d06d-4286-8e2c-a4dff10ad183" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>WebServer</DisplayName>
@@ -19,15 +19,15 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.appService" EntryPoint="WebServerTask.WebServerBGTask">
-          <uap:AppService Name="App2AppComService" />
-        </uap:Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="WebServerTask.BackgroundTask">
           <BackgroundTasks>
             <Task Type="systemEvent" />
             <Task Type="timer" />
           </BackgroundTasks>
         </Extension>
+        <uap:Extension Category="windows.appService" EntryPoint="WebServerTask.WebServerBGTask">
+          <uap:AppService Name="App2AppComService" />
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
