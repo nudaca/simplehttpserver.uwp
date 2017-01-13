@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
+using HttpServer;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
@@ -18,7 +19,7 @@ namespace WebServer
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        HttpServer Server;
+        Server Server;
 
         public MainPage()
         {
@@ -129,13 +130,10 @@ namespace WebServer
             await new MessageDialog(message, title).ShowAsync();
         }
 
-        private async void StartServer()
+        private void StartServer()
         {
-            await Task.Run(() =>
-            {
-                Server = new HttpServer(8080);
-                Server.StartServer();
-            });
+            Server = new Server(8080);
+            Server.StartServer();
         }
     }
 }

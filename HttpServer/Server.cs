@@ -9,9 +9,9 @@ using Windows.Networking.Sockets;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace WebServer
+namespace HttpServer
 {
-    public sealed class HttpServer : IDisposable
+    public sealed class Server : IDisposable
     {
         private static IDictionary<string, string> _mimeTypeMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase)
         {
@@ -85,25 +85,25 @@ namespace WebServer
         };
 
         public StorageFile File { get; set; }
-        private const uint BufferSize = 2 << 20;
-        private int port = 8080;
-        private readonly StreamSocketListener listener;
-        private AppServiceConnection appServiceConnection;
+        private const uint BufferSize = 2 << 17;
+        private int Port = 8080;
+        private readonly StreamSocketListener Listener;
+        private AppServiceConnection AppServiceConnection;
 
-        public HttpServer(int serverPort, AppServiceConnection connection) : this(serverPort)
+        public Server(int serverPort, AppServiceConnection connection) : this(serverPort)
         {
-            appServiceConnection = connection;
+            AppServiceConnection = connection;
         }
 
-        public HttpServer(int serverPort)
+        public Server(int serverPort)
         {
-            listener = new StreamSocketListener();
-            port = serverPort;
-            listener.ConnectionReceived += (s, e) => ProcessRequestAsync(e.Socket);
+            Listener = new StreamSocketListener();
+            Port = serverPort;
+            Listener.ConnectionReceived += (s, e) => ProcessRequestAsync(e.Socket);
         }
 
-        public async void StartServer() => await listener.BindServiceNameAsync(port.ToString());
-        public void Dispose() => listener.Dispose();
+        public async void StartServer() => await Listener.BindServiceNameAsync(Port.ToString());
+        public void Dispose() => Listener.Dispose();
 
         private async void ProcessRequestAsync(StreamSocket socket)
         {
