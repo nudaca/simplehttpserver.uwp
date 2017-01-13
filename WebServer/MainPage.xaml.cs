@@ -2,9 +2,11 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,8 +20,7 @@ namespace WebServer
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        HttpServer server;
-        private readonly StorageFolder installLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
+        HttpServer Server;
 
         public MainPage()
         {
@@ -57,16 +58,12 @@ namespace WebServer
 
         private async void btnPickerImage_Click(object sender, RoutedEventArgs e)
         {
-            //Set a result to return to the caller
-            var returnMessage = new ValueSet();
-            server = new HttpServer(8080);
-            server.StartServer();
-            returnMessage.Add("Status", "Success");
+            StartServer();
 
             // var myPictures = await StorageLibrary.GetLibraryAsync(Windows.Storage.KnownLibraryId.Pictures);
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
@@ -76,7 +73,7 @@ namespace WebServer
             {
                 // Application now has read/write access to the picked file
                 Log("Picked photo: " + file.Path, "Success");
-                server.File = file;
+                Server.File = file;
             }
             else
             {
@@ -86,15 +83,11 @@ namespace WebServer
 
         private async void btnPickerVideo_Click(object sender, RoutedEventArgs e)
         {
-            //Set a result to return to the caller
-            var returnMessage = new ValueSet();
-            server = new HttpServer(8080);
-            server.StartServer();
-            returnMessage.Add("Status", "Success");
+            StartServer();
 
-            Windows.Storage.Pickers.FileOpenPicker picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.HomeGroup;
+            FileOpenPicker picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.VideosLibrary;
             picker.FileTypeFilter.Clear();
             picker.FileTypeFilter.Add(".mp4");
             picker.FileTypeFilter.Add(".wmv");
@@ -103,7 +96,7 @@ namespace WebServer
             {
                 // Application now has read/write access to the picked file
                 Log("Picked video: " + file.Path, "Success");
-                server.File = file;
+                Server.File = file;
             }
             else
             {
@@ -111,9 +104,40 @@ namespace WebServer
             }
         }
 
-        private static async void Log(string message, string title)
+        private async void btnPickerSite_Click(object sender, RoutedEventArgs e)
+        {
+            StartServer();
+
+            FileOpenPicker picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.Desktop;
+            picker.FileTypeFilter.Clear();
+            picker.FileTypeFilter.Add(".html");
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Application now has read/write access to the picked file
+                Log("Picked site: " + file.Path, "Success");
+                Server.File = file;
+            }
+            else
+            {
+                Log("Operation cancelled.", "Error");
+            }
+        }
+
+        private async void Log(string message, string title)
         {
             await new MessageDialog(message, title).ShowAsync();
+        }
+
+        private async void StartServer()
+        {
+            await Task.Run(() =>
+            {
+                Server = new HttpServer(8080);
+                Server.StartServer();
+            });
         }
     }
 }

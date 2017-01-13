@@ -32,13 +32,16 @@
 				Content="Image Picker"
 				HorizontalAlignment="Stretch"
 				Margin="0,0,0,5"
-				VerticalAlignment="Top"
 				Click="btnPickerImage_Click"/>
 		<Button x:Name="btnPickerVideo"
 				Content="Video Picker"
 				HorizontalAlignment="Stretch"
-				Margin="0"
-				VerticalAlignment="Top"
+				Margin="0,0,0,5"
 				Click="btnPickerVideo_Click"/>
-    </StackPanel>
+		<Button x:Name="btnPickerSite"
+				Content="HTML Picker"
+				HorizontalAlignment="Stretch"
+				Margin="0,0,0,5"
+				Click="btnPickerSite_Click" />
+	</StackPanel>
 </Page>
