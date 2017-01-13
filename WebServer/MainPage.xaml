@@ -28,7 +28,17 @@
     mc:Ignorable="d">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="pickerBtb" Content="Image Picker" HorizontalAlignment="Stretch" Margin="0,0,0,5" VerticalAlignment="Top" Click="pickerBtb_Click"/>
-        <Button x:Name="pickerVideoBtn" Content="Video Picker" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Top" Click="pickerVideoBtn_Click"/>
+		<Button x:Name="btnPickerImage"
+				Content="Image Picker"
+				HorizontalAlignment="Stretch"
+				Margin="0,0,0,5"
+				VerticalAlignment="Top"
+				Click="btnPickerImage_Click"/>
+		<Button x:Name="btnPickerVideo"
+				Content="Video Picker"
+				HorizontalAlignment="Stretch"
+				Margin="0"
+				VerticalAlignment="Top"
+				Click="btnPickerVideo_Click"/>
     </StackPanel>
 </Page>

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
 using Windows.Networking.Sockets;
+using Windows.Storage;
 using Windows.Storage.Streams;
 
 namespace WebServer
@@ -83,8 +84,8 @@ namespace WebServer
             #endregion
         };
 
-        public string FilePath { get; set; }
-        private const uint BufferSize = 8192;
+        public StorageFile File { get; set; }
+        private const uint BufferSize = 2 << 22;
         private int port = 8080;
         private readonly StreamSocketListener listener;
         private AppServiceConnection appServiceConnection;
@@ -131,7 +132,6 @@ namespace WebServer
                 else
                     throw new InvalidDataException("HTTP method not supported: "
                                                    + requestParts[0]);
-                output.Dispose();
             }
         }
 
@@ -139,29 +139,20 @@ namespace WebServer
         {
             using (Stream resp = os.AsStreamForWrite())
             {
-                using (FileStream sourceStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
+                using (Stream sourceStream = await File.OpenStreamForWriteAsync())
                 {
                     string mime;
                     string header = string.Format("HTTP/1.1 200 OK\r\n" +
-                                      "Date: " + DateTime.Now.ToString("R") + "\r\n" +
+                                      $"Date: {DateTime.Now.ToString("R")}\r\n" +
                                       "Server: MeoGoEmbedded/1.0\r\n" +
-                                      //"Transfer-Encoding: chunked\r\n" +
-                                      "Last-Modified: {2}\r\n" +
                                       "Content-Length: {0}\r\n" +
                                       "Content-Type: {1}\r\n" +
                                       "Connection: close\r\n\r\n",
                                       sourceStream.Length,
-                                      _mimeTypeMappings.TryGetValue(Path.GetExtension(FilePath), out mime) ? mime : "application/octet-stream", File.GetLastWriteTime(FilePath).ToString("r"));
+                                      _mimeTypeMappings.TryGetValue(File.FileType, out mime) ? mime : "application/octet-stream");
                     byte[] headerArray = Encoding.UTF8.GetBytes(header);
                     await resp.WriteAsync(headerArray, 0, headerArray.Length);
-
-                    var b = new byte[1 << 15]; // 32k
-                    int count = 0;
-                    while ((count = sourceStream.Read(b, 0, b.Length)) > 0)
-                    {
-                        await resp.WriteAsync(b, 0, count);
-
-                    }
+                    await sourceStream.CopyToAsync(resp);
                     await resp.FlushAsync();
                 };
             }

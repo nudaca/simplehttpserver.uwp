@@ -55,7 +55,7 @@ namespace WebServer
             await (new MessageDialog("Task registered")).ShowAsync();
         }
 
-        private async void pickerBtb_Click(object sender, RoutedEventArgs e)
+        private async void btnPickerImage_Click(object sender, RoutedEventArgs e)
         {
             //Set a result to return to the caller
             var returnMessage = new ValueSet();
@@ -76,7 +76,7 @@ namespace WebServer
             {
                 // Application now has read/write access to the picked file
                 Log("Picked photo: " + file.Path, "Success");
-                server.FilePath = file.Path;
+                server.File = file;
             }
             else
             {
@@ -84,7 +84,7 @@ namespace WebServer
             }
         }
 
-        private async void pickerVideoBtn_Click(object sender, RoutedEventArgs e)
+        private async void btnPickerVideo_Click(object sender, RoutedEventArgs e)
         {
             //Set a result to return to the caller
             var returnMessage = new ValueSet();
@@ -103,7 +103,7 @@ namespace WebServer
             {
                 // Application now has read/write access to the picked file
                 Log("Picked video: " + file.Path, "Success");
-                server.FilePath = file.Path;
+                server.File = file;
             }
             else
             {
